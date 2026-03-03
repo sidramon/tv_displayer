@@ -1,0 +1,48 @@
+# VERSION SECTION
+version: '3.8'
+
+# SERVICES SECTION
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/next/Dockerfile
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/python/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+    environment:
+      - FLASK_APP=app/main.py
+      - FLASK_ENV=development
+      - DATA_FILE=/app/data/config.json
+      - UPLOAD_FOLDER=/app/data/uploads
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./data/uploads:/usr/share/nginx/html/uploads:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped

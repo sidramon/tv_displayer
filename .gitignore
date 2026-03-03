@@ -1,0 +1,100 @@
+############################
+# GLOBAL
+############################
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+############################
+# PYTHON / FLASK (backend)
+############################
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Flask specific
+instance/
+.webassets-cache
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checking
+.mypy_cache/
+.pyre/
+
+############################
+# NEXT.JS / NODE (frontend)
+############################
+
+# Node modules
+node_modules/
+
+# Next build output
+.next/
+out/
+
+# Production build
+build/
+
+# Coverage
+coverage/
+
+# Cache
+.npm/
+.yarn/
+.pnp.*
+.yarn/cache/
+.yarn/unplugged/
+
+# Lock files (optionnel — voir note)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+############################
+# DATABASE (si locale)
+############################
+
+# SQLite
+*.sqlite3
+*.db
+
+############################
+# Misc
+############################
+
+*.pem
+*.key

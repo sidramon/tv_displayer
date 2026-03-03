@@ -1,0 +1,35 @@
+// CONFIGURATION TYPES SECTION
+
+export interface MediaItem {
+    id: string;
+    type: 'image' | 'video';
+    url: string;
+    duration?: number;
+}
+
+export interface Playlist {
+    items: MediaItem[];
+    audio: string;
+}
+
+export interface DisplaySettings {
+    slideDuration: number;
+    rotationLength: number;
+    rotationReferenceDate: string;
+    playVideoAudio?: boolean;
+}
+
+export interface DisplayConfig {
+    settings: DisplaySettings;
+    default: Playlist;
+    schedules: Record<string, Playlist>;
+    rotations: Record<string, Playlist>;
+}
+
+export interface GlobalConfig {
+    displays: Record<string, DisplayConfig>;
+}
+
+export interface ConfigResponse {
+    config: GlobalConfig;
+}
