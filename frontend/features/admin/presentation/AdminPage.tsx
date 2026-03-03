@@ -11,17 +11,10 @@ import DisplayTabs from './components/DisplayTabs';
 
 export default function AdminPage() {
     const { config, isLoading, ...actions } = useAdminLogic();
+    const page = useAdminPage(config, actions);
 
     if (isLoading) return <div className="p-12 text-slate-900">Chargement...</div>;
-    if (!config) return <div className="p-12 text-slate-900">Erreur de connexion à l'API.</div>;
-
-    const {
-        activeDisplay, activeTarget, setActiveTarget,
-        schedules, activeItems, activeAudio, playlistTitle,
-        currentDuration, playVideoAudio,
-        handleSelectDisplay, handleCreateDisplay, handleDeleteDisplay,
-        handleDeleteSchedule, handleAddMedia, handleDeleteMedia, handleUpdateAudio,
-    } = useAdminPage(config, actions);
+    if (!config) return <div className="p-12 text-slate.900">Erreur de connexion à l'API.</div>;
 
     return (
         <div className="h-screen bg-slate-50 text-slate-900 flex flex-col overflow-hidden">
@@ -34,44 +27,44 @@ export default function AdminPage() {
                     </div>
                     <DisplayTabs
                         displays={Object.keys(config.displays)}
-                        activeDisplay={activeDisplay}
-                        onSelectDisplay={handleSelectDisplay}
-                        onCreateDisplay={handleCreateDisplay}
-                        onDeleteDisplay={handleDeleteDisplay}
+                        activeDisplay={page.activeDisplay}
+                        onSelectDisplay={page.handleSelectDisplay}
+                        onCreateDisplay={page.handleCreateDisplay}
+                        onDeleteDisplay={page.handleDeleteDisplay}
                     />
                 </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 flex-1 overflow-hidden min-h-0">
                     <div className="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
                         <ScheduleSelector
-                            activeTarget={activeTarget}
-                            onChangeTarget={setActiveTarget}
-                            schedules={schedules}
+                            activeTarget={page.activeTarget}
+                            onChangeTarget={page.setActiveTarget}
+                            schedules={page.schedules}
                             onAddScheduleRange={actions.addScheduleRange}
-                            onDeleteSchedule={handleDeleteSchedule}
+                            onDeleteSchedule={page.handleDeleteSchedule}
                         />
                     </div>
 
                     <div className="lg:col-span-2 h-full min-h-0">
                         <PlaylistEditor
-                            title={playlistTitle}
-                            items={activeItems}
-                            onDeleteMedia={handleDeleteMedia}
+                            title={page.playlistTitle}
+                            items={page.activeItems}
+                            onDeleteMedia={page.handleDeleteMedia}
                         />
                     </div>
 
                     <div className="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
                         <DisplaySettings
-                            duration={currentDuration}
+                            duration={page.currentDuration}
                             onDurationChange={actions.updateDuration}
-                            playVideoAudio={playVideoAudio}
+                            playVideoAudio={page.playVideoAudio}
                             onToggleVideoAudio={actions.toggleVideoAudio}
                         />
                         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm shrink-0">
                             <h2 className="text-xl font-semibold mb-6">Ajouter un média</h2>
-                            <MediaUploader onUploadComplete={handleAddMedia} />
+                            <MediaUploader onUploadComplete={page.handleAddMedia} />
                         </div>
-                        <AudioManager currentAudio={activeAudio} onUpdateAudio={handleUpdateAudio} />
+                        <AudioManager currentAudio={page.activeAudio} onUpdateAudio={page.handleUpdateAudio} />
                     </div>
                 </div>
 

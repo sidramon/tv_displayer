@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MediaItem, GlobalConfig } from '@/shared/utils/types/config.types';
 
 export function useAdminPage(
-    config: GlobalConfig,
+    config: GlobalConfig | null,
     actions: {
         addMedia: (item: MediaItem, target: string) => void;
         deleteMedia: (index: number, target: string) => void;
@@ -15,11 +15,10 @@ export function useAdminPage(
     const [activeDisplay, setActiveDisplay] = useState('default');
     const [activeTarget, setActiveTarget] = useState('default');
 
-    const display = config.displays[activeDisplay];
+    const display = config?.displays[activeDisplay];
     const settings = display?.settings;
     const schedules = Object.keys(display?.schedules || {});
 
-    // Dérivation playlist active
     let activeItems: MediaItem[] = [];
     let activeAudio = '';
     let playlistTitle = `Playlist Globale (${activeDisplay === 'default' ? 'Défaut' : activeDisplay})`;
@@ -35,7 +34,6 @@ export function useAdminPage(
         playlistTitle = `Playlist - Du ${start} au ${end}`;
     }
 
-    // Handlers avec navigation
     const handleSelectDisplay = (name: string) => {
         setActiveDisplay(name);
         setActiveTarget('default');
