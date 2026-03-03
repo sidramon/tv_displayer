@@ -1,6 +1,6 @@
 'use client';
 
-import { useAudioUpload } from '../../application/useAudioUpload';
+import { useAudioUpload } from '../../application/audio/useAudioUpload';
 
 interface AudioManagerProps {
     currentAudio: string;

@@ -8,13 +8,20 @@ import DisplaySettings from './components/DisplaySettings';
 import PlaylistEditor from './components/PlaylistEditor';
 import ScheduleSelector from './components/ScheduleSelector';
 import DisplayTabs from './components/DisplayTabs';
+import LoginPage from "@/features/admin/presentation/LoginPage";
+import {useAuth} from "@/features/admin/application/useAuth";
 
 export default function AdminPage() {
+    const { isAuthenticated, setIsAuthenticated } = useAuth();
     const { config, isLoading, ...actions } = useAdminLogic();
     const page = useAdminPage(config, actions);
 
+    if (!isAuthenticated) {
+        return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
+    }
+
     if (isLoading) return <div className="p-12 text-slate-900">Chargement...</div>;
-    if (!config) return <div className="p-12 text-slate.900">Erreur de connexion à l'API.</div>;
+    if (!config) return <div className="p-12 text-slate-900">Erreur de connexion à l'API.</div>;
 
     return (
         <div className="h-screen bg-slate-50 text-slate-900 flex flex-col overflow-hidden">

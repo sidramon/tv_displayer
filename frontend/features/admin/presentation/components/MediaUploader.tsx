@@ -3,7 +3,7 @@
 import React from 'react';
 import Cropper from 'react-easy-crop';
 import { MediaItem } from '@/shared/utils/types/config.types';
-import { useMediaUpload } from '../../application/useMediaUpload';
+import { useMediaUpload } from '../../application/media/useMediaUpload';
 
 interface MediaUploaderProps {
     onUploadComplete: (item: MediaItem) => void;

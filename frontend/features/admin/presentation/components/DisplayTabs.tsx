@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNewDisplay } from '../../application/useNewDisplay';
+import { useNewDisplay } from '../../application/display/useNewDisplay';
 
 interface DisplayTabsProps {
     displays: string[];

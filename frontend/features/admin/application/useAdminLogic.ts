@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getConfig, saveConfig } from '@/shared/utils/api';
 import { GlobalConfig } from '@/shared/utils/types/config.types';
-import { useMediaActions } from './useMediaActions';
-import { useAudioActions } from './useAudioActions';
+import { useMediaActions } from './media/useMediaActions';
+import { useAudioActions } from './audio/useAudioActions';
 import { useScheduleActions } from './useScheduleActions';
-import { useDisplayActions } from './useDisplayActions';
+import { useDisplayActions } from './display/useDisplayActions';
 
 export function useAdminLogic(displayName: string = 'default') {
     const [config, setConfig] = useState<GlobalConfig | null>(null);
