@@ -1,7 +1,6 @@
-// IMPORT SECTION
-import React, { useState } from 'react';
+import React from 'react';
+import { useNewDisplay } from '../../application/useNewDisplay';
 
-// INTERFACES SECTION
 interface DisplayTabsProps {
     displays: string[];
     activeDisplay: string;
@@ -10,31 +9,10 @@ interface DisplayTabsProps {
     onDeleteDisplay: (name: string) => void;
 }
 
-// COMPONENT SECTION
-export default function DisplayTabs({
-                                        displays,
-                                        activeDisplay,
-                                        onSelectDisplay,
-                                        onCreateDisplay,
-                                        onDeleteDisplay
-                                    }: DisplayTabsProps) {
-    const [isAddingDisplay, setIsAddingDisplay] = useState<boolean>(false);
-    const [newDisplayName, setNewDisplayName] = useState<string>('');
+export default function DisplayTabs({ displays, activeDisplay, onSelectDisplay, onCreateDisplay, onDeleteDisplay }: DisplayTabsProps) {
+    const { isAdding, name, setIsAdding, handleNameChange, handleSubmit, cancel } = useNewDisplay(displays, onCreateDisplay);
 
-    const sortedDisplays = [
-        'default',
-        ...displays.filter(d => d !== 'default').sort()
-    ];
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const cleanName = newDisplayName.trim().toLowerCase();
-        if (cleanName && !displays.includes(cleanName)) {
-            onCreateDisplay(cleanName);
-            setIsAddingDisplay(false);
-            setNewDisplayName('');
-        }
-    };
+    const sortedDisplays = ['default', ...displays.filter(d => d !== 'default').sort()];
 
     return (
         <div className="flex border-b border-slate-200 overflow-x-auto custom-scrollbar pt-2">
@@ -47,10 +25,7 @@ export default function DisplayTabs({
                             : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                     }`}
                 >
-                    <button
-                        onClick={() => onSelectDisplay(display)}
-                        className="px-6 py-3 font-semibold whitespace-nowrap"
-                    >
+                    <button onClick={() => onSelectDisplay(display)} className="px-6 py-3 font-semibold whitespace-nowrap">
                         {display === 'default' ? 'Global (Défaut)' : display}
                     </button>
                     {display !== 'default' && activeDisplay === display && (
@@ -58,35 +33,31 @@ export default function DisplayTabs({
                             onClick={(e) => { e.stopPropagation(); onDeleteDisplay(display); }}
                             className="pr-4 text-slate-400 hover:text-red-600 transition-colors"
                             title="Supprimer cet écran"
-                        >
-                            ✕
-                        </button>
+                        >✕</button>
                     )}
                 </div>
             ))}
 
-            {isAddingDisplay ? (
+            {isAdding ? (
                 <form onSubmit={handleSubmit} className="flex items-center px-4 pb-2 border-b-2 border-transparent">
                     <input
                         type="text"
-                        value={newDisplayName}
-                        onChange={(e) => setNewDisplayName(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '').substring(0, 16))}
+                        value={name}
+                        onChange={(e) => handleNameChange(e.target.value)}
                         placeholder="Nom (max 16)"
                         maxLength={16}
                         className="px-3 py-1.5 text-sm border border-slate-300 rounded-md outline-none focus:border-blue-500 w-36 shadow-sm"
                         autoFocus
                     />
                     <button type="submit" className="ml-2 text-green-600 font-bold p-1 hover:bg-green-50 rounded transition-colors">✓</button>
-                    <button type="button" onClick={() => {setIsAddingDisplay(false); setNewDisplayName('');}} className="ml-1 text-red-500 font-bold p-1 hover:bg-red-50 rounded transition-colors">✕</button>
+                    <button type="button" onClick={cancel} className="ml-1 text-red-500 font-bold p-1 hover:bg-red-50 rounded transition-colors">✕</button>
                 </form>
             ) : (
                 <button
-                    onClick={() => setIsAddingDisplay(true)}
+                    onClick={() => setIsAdding(true)}
                     className="px-5 py-3 font-bold text-slate-400 hover:text-blue-600 border-b-2 border-transparent transition-colors"
                     title="Ajouter un écran"
-                >
-                    +
-                </button>
+                >+</button>
             )}
         </div>
     );

@@ -1,5 +1,5 @@
 // IMPORT SECTION
-import { DisplayConfig, Playlist } from '@/shared/utils/types';
+import { DisplayConfig, Playlist } from '@/shared/utils/types/config.types';
 
 // SERVICE SECTION
 export function getActivePlaylist(config: DisplayConfig, targetDate: Date = new Date()): Playlist {

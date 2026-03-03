@@ -1,5 +1,5 @@
 import React from 'react';
-import { MediaItem } from '@/shared/utils/types';
+import { MediaItem } from '@/shared/utils/types/config.types';
 
 // INTERFACES SECTION
 interface PlaylistEditorProps {

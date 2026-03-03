@@ -4,6 +4,8 @@ import json
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
+from utils.storage import ensure_directories, ensure_default_config
+from utils.default_config import DEFAULT_CONFIG
 
 # INITIALIZATION SECTION
 load_dotenv()
@@ -21,39 +23,13 @@ def create_app():
     app.config.from_object(Config)
     CORS(app)
 
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-    data_dir = os.path.dirname(app.config['DATA_FILE'])
-    if not os.path.exists(data_dir) and data_dir != '':
-        os.makedirs(data_dir, exist_ok=True)
-
-    if not os.path.exists(app.config['DATA_FILE']):
-        default_config = {
-            "displays": {
-                "default": {
-                    "settings": {
-                        "slideDuration": 8000,
-                        "rotationLength": 2,
-                        "rotationReferenceDate": "2024-01-07"
-                    },
-                    "default": {"items": [], "audio": ""},
-                    "schedules": {},
-                    "rotations": {
-                        "1": {"items": [], "audio": ""},
-                        "2": {"items": [], "audio": ""}
-                    }
-                }
-            }
-        }
-        with open(app.config['DATA_FILE'], 'w') as f:
-            json.dump(default_config, f)
+    ensure_directories(app.config['UPLOAD_FOLDER'], app.config['DATA_FILE'])
+    ensure_default_config(app.config['DATA_FILE'], DEFAULT_CONFIG)
 
     with app.app_context():
         from routes.config import config_bp
         from routes.upload import upload_bp
         from routes.auth import auth_bp
-
         app.register_blueprint(config_bp)
         app.register_blueprint(upload_bp)
         app.register_blueprint(auth_bp)
