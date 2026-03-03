@@ -25,21 +25,23 @@ export default function Header() {
     }, []);
 
     return (
-        <header className="h-32 bg-blue-950 border-b border-gray-700 flex items-center justify-between px-12 shadow-2xl shrink-0 z-10">
-            <div className="flex flex-col w-72">
-                <div className="text-6xl font-semibold tracking-wide">{time}</div>
-                <div className="text-xl text-gray-400 mt-1 uppercase tracking-wider">{dateStr}</div>
+        <header className="h-32 bg-blue-950 border-b border-gray-700 flex items-center justify-between px-8 shadow-2xl shrink-0 z-10 gap-8 overflow-hidden">
+            <div className="flex flex-col w-72 shrink-0">
+                <div className="text-5xl lg:text-6xl font-semibold tracking-wide">{time}</div>
+                <div className="text-lg lg:text-xl text-gray-400 mt-1 uppercase tracking-wider">{dateStr}</div>
             </div>
 
-            <div className="flex-1 flex justify-center items-center h-full py-2">
+            <div className="flex-1 flex justify-center items-center h-full py-2 min-w-0">
                 <img
                     src="https://residencespelletier.ca/wp/wp-content/uploads/2019/07/TEF-Les-residences-Pelletier-Open-graph.png"
                     alt="Logo"
-                    className="h-full max-h-28 object-contain drop-shadow-xl rounded-2xl"
+                    className="h-full max-h-24 object-contain drop-shadow-xl rounded-2xl"
                 />
             </div>
 
-            <WeatherWidget />
+            <div className="shrink-0 flex justify-end">
+                <WeatherWidget />
+            </div>
         </header>
     );
 }

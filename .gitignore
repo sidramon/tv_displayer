@@ -91,6 +91,7 @@ coverage/
 # SQLite
 *.sqlite3
 *.db
+data/
 
 ############################
 # Misc
