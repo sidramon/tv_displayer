@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getConfig, saveConfig } from '@/shared/utils/api';
+import { getConfig, saveConfig } from '@/shared/api/api';
 import { GlobalConfig } from '@/shared/utils/types/config.types';
 import { useMediaActions } from './media/useMediaActions';
 import { useAudioActions } from './audio/useAudioActions';
@@ -29,6 +29,7 @@ export function useAdminLogic(displayName: string = 'default') {
     return {
         config,
         isLoading,
+        handleSave,
         ...useMediaActions(params),
         ...useAudioActions(params),
         ...useScheduleActions(params),

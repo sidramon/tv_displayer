@@ -1,9 +1,11 @@
-// features/admin/application/useAuth.ts
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export function useAuth() {
-    const [isAuthenticated, setIsAuthenticated] = useState(
-        () => !!localStorage.getItem('admin_token')
-    );
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        setIsAuthenticated(!!localStorage.getItem('admin_token'));
+    }, []);
+
     return { isAuthenticated, setIsAuthenticated };
 }

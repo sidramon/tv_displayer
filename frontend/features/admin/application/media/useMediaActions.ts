@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { GlobalConfig, MediaItem } from '@/shared/utils/types/config.types';
-import { deleteFile } from '@/shared/utils/api';
+import { deleteFile } from '@/shared/api/api';
 
 interface UseMediaActionsParams {
     config: GlobalConfig | null;

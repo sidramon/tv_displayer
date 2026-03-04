@@ -6,6 +6,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from utils.storage import ensure_directories, ensure_default_config
 from utils.default_config import DEFAULT_CONFIG
+from utils.auth import require_auth
 
 # INITIALIZATION SECTION
 load_dotenv()

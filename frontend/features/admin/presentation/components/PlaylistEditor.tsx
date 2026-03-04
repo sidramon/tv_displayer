@@ -1,28 +1,26 @@
 import React from 'react';
 import { MediaItem } from '@/shared/utils/types/config.types';
 
-// INTERFACES SECTION
 interface PlaylistEditorProps {
     title: string;
     items: MediaItem[];
     onDeleteMedia: (index: number) => void;
 }
 
-// COMPONENT SECTION
 export default function PlaylistEditor({ title, items, onDeleteMedia }: PlaylistEditorProps) {
     return (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm h-full flex flex-col overflow-hidden">
-            <div className="p-6 border-b border-slate-100 shrink-0">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-full flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-700 shrink-0">
                 <h2 className="text-xl font-semibold">{title}</h2>
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                 {items.length === 0 ? (
-                    <p className="text-slate-500 italic">Aucun média dans la playlist.</p>
+                    <p className="text-slate-500 dark:text-slate-400 italic">Aucun média dans la playlist.</p>
                 ) : (
                     <div className="grid grid-cols-2 gap-4">
                         {items.map((item, index) => (
-                            <div key={item.id} className="relative group rounded-xl overflow-hidden bg-slate-100 aspect-video border border-slate-200">
+                            <div key={item.id} className="relative group rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 aspect-video border border-slate-200 dark:border-slate-600">
                                 {item.type === 'image' ? (
                                     <img src={item.url} className="w-full h-full object-cover" alt="" />
                                 ) : (

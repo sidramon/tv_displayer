@@ -1,5 +1,12 @@
 # app/data/default_config.py
 DEFAULT_CONFIG = {
+"settings": {
+        "companyName": "",
+        "logoUrl": "",
+        "theme": "light",
+        "weatherLatitude": 0,
+        "weatherLongitude": 0,
+    },
     "displays": {
         "default": {
             "settings": {

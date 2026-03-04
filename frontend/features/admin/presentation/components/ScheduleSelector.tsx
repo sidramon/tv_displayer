@@ -1,9 +1,7 @@
-// IMPORT SECTION
 'use client';
 
 import React, { useState } from 'react';
 
-// INTERFACES SECTION
 interface ScheduleSelectorProps {
     activeTarget: string;
     onChangeTarget: (target: string) => void;
@@ -12,7 +10,6 @@ interface ScheduleSelectorProps {
     onDeleteSchedule: (rangeKey: string) => void;
 }
 
-// COMPONENT SECTION
 export default function ScheduleSelector({
                                              activeTarget,
                                              onChangeTarget,
@@ -32,44 +29,44 @@ export default function ScheduleSelector({
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <h2 className="text-xl font-semibold mb-6">Planification</h2>
 
             <div className="mb-6">
-                <h3 className="text-sm font-semibold text-slate-700 mb-3">Nouvelle programmation</h3>
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Nouvelle programmation</h3>
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-2">
                         <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-700 outline-none focus:border-blue-500"
                         />
                         <input
                             type="date"
                             value={endDate}
                             min={startDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-700 outline-none focus:border-blue-500"
                         />
                     </div>
                     <button
                         onClick={handleAdd}
                         disabled={!startDate || !endDate}
-                        className="w-full py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700 disabled:opacity-50 transition-colors"
+                        className="w-full py-2 bg-slate-800 dark:bg-slate-600 text-white rounded-lg text-sm font-medium hover:bg-slate-700 dark:hover:bg-slate-500 disabled:opacity-50 transition-colors"
                     >
                         Ajouter la plage
                     </button>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-3 border-t border-slate-100 pt-6">
+            <div className="flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-6">
                 <button
                     onClick={() => onChangeTarget('default')}
                     className={`px-4 py-3 rounded-xl text-left font-medium transition-colors ${
                         activeTarget === 'default'
                             ? 'bg-blue-600 text-white shadow-md'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                     }`}
                 >
                     Affichage par défaut
@@ -87,14 +84,14 @@ export default function ScheduleSelector({
                                 className={`flex-1 px-4 py-3 rounded-xl text-left font-medium transition-colors ${
                                     isActive
                                         ? 'bg-blue-600 text-white shadow-md'
-                                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                                 }`}
                             >
                                 Du {start} au {end}
                             </button>
                             <button
                                 onClick={() => onDeleteSchedule(rangeKey)}
-                                className="p-3 bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-colors shrink-0"
+                                className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors shrink-0"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"

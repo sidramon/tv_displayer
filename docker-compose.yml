@@ -1,18 +1,8 @@
-# VERSION SECTION
-version: '3.8'
-
-# SERVICES SECTION
 services:
   frontend:
     build:
       context: ./frontend
       dockerfile: ../docker/next/Dockerfile
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    environment:
-      - NODE_ENV=development
     ports:
       - "3000:3000"
     restart: unless-stopped
@@ -24,16 +14,19 @@ services:
     env_file:
       - .env
     volumes:
-      - ./backend:/app
       - ./data:/app/data
     environment:
-      - FLASK_APP=app/main.py
-      - FLASK_ENV=development
       - DATA_FILE=/app/data/config.json
       - UPLOAD_FOLDER=/app/data/uploads
     ports:
       - "5000:5000"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/config')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
   nginx:
     image: nginx:alpine
@@ -43,6 +36,8 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - frontend
-      - backend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
     restart: unless-stopped

@@ -1,6 +1,9 @@
-import { ForecastData, CurrentWeather } from '@/shared/utils/types/';
+import { ForecastData, CurrentWeather } from '@/shared/utils/types/weather.types';
 
-const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast?latitude=46.2255&longitude=-72.6175&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=America%2FToronto';
+function buildWeatherUrl(latitude: number, longitude: number): string {
+    const tz = encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    return `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=${tz}`;
+}
 
 export function parseWeatherCode(code: number): string {
     if (code === 0) return "Dégagé";
@@ -12,8 +15,11 @@ export function parseWeatherCode(code: number): string {
     return "Inconnu";
 }
 
-export async function fetchWeather(): Promise<{ current: CurrentWeather; forecast: ForecastData[] }> {
-    const response = await fetch(WEATHER_URL);
+export async function fetchWeather(
+    latitude: number,
+    longitude: number
+): Promise<{ current: CurrentWeather; forecast: ForecastData[] }> {
+    const response = await fetch(buildWeatherUrl(latitude, longitude));
     const data = await response.json();
 
     const current: CurrentWeather = {

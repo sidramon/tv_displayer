@@ -3,11 +3,12 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { getConfig } from '@/shared/utils/api';
+import { getConfig } from '@/shared/api/api';
+import { GlobalSettings } from '@/shared/utils/types/config.types';
 
-// COMPONENT SECTION
 export default function HomePage() {
     const [displays, setDisplays] = useState<string[]>([]);
+    const [settings, setSettings] = useState<GlobalSettings | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -16,6 +17,9 @@ export default function HomePage() {
                 const data = await getConfig();
                 if (data?.config?.displays) {
                     setDisplays(Object.keys(data.config.displays).filter(d => d !== 'default'));
+                }
+                if (data?.config?.settings) {
+                    setSettings(data.config.settings);
                 }
             } catch (error) {
                 console.error("Erreur lors du chargement des configurations:", error);
@@ -26,10 +30,12 @@ export default function HomePage() {
         loadConfig();
     }, []);
 
+    const companyName = settings?.companyName || '';
+
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-slate-900 text-white font-sans p-8">
             <div className="mb-12 text-center">
-                <h1 className="text-5xl font-bold tracking-tight mb-4">Résidences Pelletier</h1>
+                <h1 className="text-5xl font-bold tracking-tight mb-4">{companyName}</h1>
                 <p className="text-xl text-slate-400">Système d'affichage dynamique</p>
             </div>
 

@@ -1,6 +1,6 @@
 // IMPORT SECTION
 import { useState, useEffect, useCallback } from 'react';
-import { getConfig } from '@/shared/utils/api';
+import { getConfig } from '@/shared/api/api';
 import { Playlist } from '@/shared/utils/types/config.types';
 import { getActivePlaylist } from '../domain/playlist.service';
 import {useInterval} from "@/shared/hooks/useInterval";

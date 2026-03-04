@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { uploadFile } from '@/shared/utils/api';
+import { uploadFile } from '@/shared/api/api';
 
 export function useAudioUpload(onUpdateAudio: (url: string) => void) {
     const [isUploading, setIsUploading] = useState(false);

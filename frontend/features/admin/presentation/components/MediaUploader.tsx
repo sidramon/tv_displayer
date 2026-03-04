@@ -59,19 +59,19 @@ export default function MediaUploader({ onUploadComplete }: MediaUploaderProps) 
 
     return (
         <div className="w-full">
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100 transition-colors">
-                <svg className="w-8 h-8 mb-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 dark:border-slate-600 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                <svg className="w-8 h-8 mb-3 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="mb-2 text-sm text-slate-600">
+                <p className="mb-2 text-sm text-slate-600 dark:text-slate-300">
                     <span className="font-semibold">Cliquez pour ajouter</span><br />ou glissez des fichiers
                 </p>
-                <p className="text-xs text-slate-500">Images (PNG, JPG) ou Vidéos (MP4)</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Images (PNG, JPG) ou Vidéos (MP4)</p>
                 <input type="file" multiple className="hidden" accept="image/*,video/*" onChange={handleFileChange} disabled={isUploading} />
             </label>
 
             {isUploading && (
-                <div className="mt-4 text-center text-blue-600 font-medium animate-pulse">
+                <div className="mt-4 text-center text-blue-600 dark:text-blue-400 font-medium animate-pulse">
                     Téléversement en cours...
                 </div>
             )}

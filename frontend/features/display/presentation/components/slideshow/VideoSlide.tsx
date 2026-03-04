@@ -16,6 +16,7 @@ export default function VideoSlide({ item, isActive, playVideoAudio, onEnded }: 
                 muted
                 playsInline
                 className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 brightness-50"
+                preload="auto"
             />
             <video
                 id={`vid-main-${item.id}`}
@@ -24,6 +25,7 @@ export default function VideoSlide({ item, isActive, playVideoAudio, onEnded }: 
                 playsInline
                 onEnded={isActive ? onEnded : undefined}
                 className="relative z-10 w-full h-full object-contain object-center"
+                preload="auto"
             />
         </>
     );

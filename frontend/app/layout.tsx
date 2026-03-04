@@ -5,7 +5,7 @@ import React from "react";
 
 // CONFIGURATION SECTION
 export const metadata: Metadata = {
-    title: "Interface TV - Résidences Pelletier",
+    title: "Interface TV",
     description: "Système d'affichage dynamique",
 };
 

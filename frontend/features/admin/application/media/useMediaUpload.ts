@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { uploadFile } from '@/shared/utils/api';
+import { uploadFile } from '@/shared/api/api';
 import getCroppedImg, { PixelCrop } from '@/shared/utils/cropImage';
 import { MediaItem } from '@/shared/utils/types/config.types';
 

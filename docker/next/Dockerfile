@@ -1,13 +1,6 @@
-# BASE SECTION
-FROM node:18-alpine
-
-# WORKDIR SECTION
+FROM node:20-alpine
 WORKDIR /app
-
-# DEPENDENCIES SECTION
 COPY package*.json ./
-RUN npm install
-
-# RUN SECTION
+RUN npm install --legacy-peer-deps
+COPY . .
 EXPOSE 3000
-CMD ["npm", "run", "dev"]

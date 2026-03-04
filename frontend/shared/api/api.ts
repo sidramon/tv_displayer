@@ -1,5 +1,5 @@
 // IMPORT SECTION
-import { ConfigResponse, GlobalConfig } from './types/config.types';
+import { ConfigResponse, GlobalConfig } from '../utils/types/config.types';
 
 // CONFIGURATION SECTION
 const getCacheBuster = () => `?t=${new Date().getTime()}`;

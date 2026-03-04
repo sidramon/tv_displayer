@@ -26,7 +26,16 @@ export interface DisplayConfig {
     rotations: Record<string, Playlist>;
 }
 
+export interface GlobalSettings {
+    companyName: string;
+    logoUrl: string;
+    theme: 'dark' | 'light';
+    weatherLatitude: number;
+    weatherLongitude: number;
+}
+
 export interface GlobalConfig {
+    settings: GlobalSettings;
     displays: Record<string, DisplayConfig>;
 }
 

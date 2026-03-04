@@ -1,0 +1,10 @@
+services:
+  frontend:
+    environment:
+      - NODE_ENV=production
+    command: sh -c "npm run build && npm start"
+
+  backend:
+    environment:
+      - FLASK_ENV=production
+    command: sh -c "cd /app/app && gunicorn --bind 0.0.0.0:5000 --workers 4 main:app"
