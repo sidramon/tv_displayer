@@ -17,8 +17,9 @@ import LoginPage from './LoginPage';
 
 export default function AdminPage() {
     const { isAuthenticated, setIsAuthenticated } = useAuth();
-    const { config, isLoading, handleSave, ...actions } = useAdminLogic();
-    const page = useAdminPage(config, actions);
+    const [activeDisplay, setActiveDisplay] = useState('default');
+    const { config, isLoading, handleSave, ...actions } = useAdminLogic(activeDisplay);
+    const page = useAdminPage(config, actions, activeDisplay, setActiveDisplay);
     const [showSettings, setShowSettings] = useState(false);
 
     if (!isAuthenticated) {

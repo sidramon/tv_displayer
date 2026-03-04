@@ -10,9 +10,10 @@ export function useAdminPage(
         deleteSchedule: (key: string) => void;
         createDisplay: (name: string) => void;
         deleteDisplay: (name: string) => void;
-    }
+    },
+    activeDisplay: string,
+    setActiveDisplay: (name: string) => void,
 ) {
-    const [activeDisplay, setActiveDisplay] = useState('default');
     const [activeTarget, setActiveTarget] = useState('default');
 
     const display = config?.displays[activeDisplay];
