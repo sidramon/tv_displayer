@@ -1,5 +1,6 @@
 import React from 'react';
 import { MediaItem } from '@/shared/utils/types/config.types';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface PlaylistEditorProps {
     title: string;
@@ -8,6 +9,8 @@ interface PlaylistEditorProps {
 }
 
 export default function PlaylistEditor({ title, items, onDeleteMedia }: PlaylistEditorProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm h-full flex flex-col overflow-hidden">
             <div className="p-6 border-b border-slate-100 dark:border-slate-700 shrink-0">
@@ -16,7 +19,7 @@ export default function PlaylistEditor({ title, items, onDeleteMedia }: Playlist
 
             <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                 {items.length === 0 ? (
-                    <p className="text-slate-500 dark:text-slate-400 italic">Aucun média dans la playlist.</p>
+                    <p className="text-slate-500 dark:text-slate-400 italic">{t.playlist.empty}</p>
                 ) : (
                     <div className="grid grid-cols-2 gap-4">
                         {items.map((item, index) => (

@@ -1,15 +1,13 @@
-// features/admin/application/useLogin.ts
 import { useState } from 'react';
 
 export function useLogin(onLogin: () => void) {
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [errorKey, setErrorKey] = useState<'error' | 'connectionError' | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         setIsLoading(true);
-        setError('');
+        setErrorKey(null);
 
         try {
             const response = await fetch('/api/auth/login', {
@@ -19,17 +17,18 @@ export function useLogin(onLogin: () => void) {
             });
 
             if (response.ok) {
-                localStorage.setItem('admin_token', password);
+                const data = await response.json();
+                localStorage.setItem('admin_token', data.token);
                 onLogin();
             } else {
-                setError('Mot de passe incorrect.');
+                setErrorKey('error');
             }
         } catch {
-            setError('Erreur de connexion au serveur.');
+            setErrorKey('connectionError');
         }
 
         setIsLoading(false);
     };
 
-    return { password, setPassword, error, isLoading, handleSubmit };
+    return { password, setPassword, errorKey, isLoading, handleSubmit };
 }

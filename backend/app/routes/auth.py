@@ -1,21 +1,39 @@
-# IMPORT SECTION
 from flask import Blueprint, jsonify, request, current_app
-import os
-from utils.auth import require_auth
+import bcrypt
+from utils.auth import require_auth, check_password, generate_token, active_tokens
+from utils.config_service import get_config_data, save_config_data
 
-# CONFIGURATION SECTION
 auth_bp = Blueprint('auth_api', __name__, url_prefix='/api/auth')
 
-# ROUTES SECTION
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.json
     password = data.get('password') if data else None
+    if not password:
+        return jsonify({"status": "unauthorized"}), 401
 
-    if password == current_app.config['ADMIN_PASSWORD']:
-        return jsonify({"status": "success"}), 200
+    config = get_config_data()
+    stored = config.get('settings', {}).get('adminPassword') or current_app.config['ADMIN_PASSWORD']
 
-    return jsonify({"status": "unauthorized"}), 401
+    if not check_password(password, stored):
+        return jsonify({"status": "unauthorized"}), 401
+
+    # Migre mot de passe en clair vers bcrypt
+    if not stored.startswith('$2b$'):
+        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+        config.setdefault('settings', {})['adminPassword'] = hashed
+        save_config_data(config)
+
+    token = generate_token()
+    active_tokens.add(token)
+    return jsonify({"status": "success", "token": token}), 200
+
+@auth_bp.route('/logout', methods=['POST'])
+@require_auth
+def logout():
+    token = request.headers.get('X-Admin-Token')
+    active_tokens.discard(token)
+    return jsonify({"status": "success"}), 200
 
 @auth_bp.route('/change-password', methods=['POST'])
 @require_auth
@@ -26,25 +44,9 @@ def change_password():
     if not new_password or len(new_password) < 4:
         return jsonify({"status": "error", "message": "Mot de passe invalide"}), 400
 
-    env_path = os.path.join(current_app.root_path, '..', '.env')
+    hashed = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+    config = get_config_data()
+    config.setdefault('settings', {})['adminPassword'] = hashed
+    save_config_data(config)
 
-    try:
-        with open(env_path, 'r') as f:
-            lines = f.readlines()
-
-        with open(env_path, 'w') as f:
-            updated = False
-            for line in lines:
-                if line.startswith('ADMIN_PASSWORD='):
-                    f.write(f'ADMIN_PASSWORD={new_password}\n')
-                    updated = True
-                else:
-                    f.write(line)
-            if not updated:
-                f.write(f'ADMIN_PASSWORD={new_password}\n')
-
-    except FileNotFoundError:
-        pass
-
-    current_app.config['ADMIN_PASSWORD'] = new_password
     return jsonify({"status": "success"}), 200

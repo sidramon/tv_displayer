@@ -6,6 +6,7 @@ DEFAULT_CONFIG = {
         "theme": "light",
         "weatherLatitude": 0,
         "weatherLongitude": 0,
+        "locale": "fr",
     },
     "displays": {
         "default": {

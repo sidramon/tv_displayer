@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAdminLogic } from '../application/useAdminLogic';
 import { useAdminPage } from '../application/useAdminPage';
 import { useAuth } from "@/features/admin/application/useAuth";
+import { useTranslation } from '@/shared/i18n/useTranslation';
 import MediaUploader from './components/MediaUploader';
 import AudioManager from './components/AudioManager';
 import DisplaySettings from './components/DisplaySettings';
@@ -15,39 +16,50 @@ import SettingsButton from './components/SettingsButton';
 import SettingsPage from './SettingsPage';
 import LoginPage from './LoginPage';
 
+type MobileTab = 'playlist' | 'schedule' | 'settings';
+
 export default function AdminPage() {
     const { isAuthenticated, setIsAuthenticated } = useAuth();
     const [activeDisplay, setActiveDisplay] = useState('default');
     const { config, isLoading, handleSave, ...actions } = useAdminLogic(activeDisplay);
     const page = useAdminPage(config, actions, activeDisplay, setActiveDisplay);
     const [showSettings, setShowSettings] = useState(false);
+    const [mobileTab, setMobileTab] = useState<MobileTab>('playlist');
+    const { t } = useTranslation();
 
     if (!isAuthenticated) {
         return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
     }
 
-    if (isLoading) return <div className="p-12 text-slate-900">Chargement...</div>;
-    if (!config) return <div className="p-12 text-slate-900">Erreur de connexion à l'API.</div>;
+    if (isLoading) return <div className="p-12 text-slate-900">{t.display.loading}</div>;
+    if (!config) return <div className="p-12 text-slate-900">{t.display.connectionError}</div>;
 
     const theme = config.settings?.theme || 'light';
 
+    const mobileTabs: { key: MobileTab; label: string }[] = [
+        { key: 'playlist', label: t.mobile.playlist },
+        { key: 'schedule', label: t.mobile.schedule },
+        { key: 'settings', label: t.mobile.settings },
+    ];
+
     return (
         <div className={theme}>
-            <div className="h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white flex flex-col overflow-hidden">
+            {/* Bureau */}
+            <div className="hidden lg:flex h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white flex-col overflow-hidden">
                 {showSettings && (
                     <SettingsPage
                         config={config}
                         handleSave={handleSave}
                         onClose={() => setShowSettings(false)}
+                        onLogout={() => setIsAuthenticated(false)}
                     />
                 )}
-
-                <div className="max-w-[1400px] w-full mx-auto flex flex-col h-full p-8">
+                <div className="w-full max-w-[1400px] mx-auto flex flex-col h-full p-8">
                     <header className="mb-6 shrink-0 flex flex-col gap-4">
                         <div className="flex items-start justify-between">
                             <div>
-                                <h1 className="text-4xl font-bold tracking-tight">Panneau d'administration</h1>
-                                <p className="text-slate-500 dark:text-slate-400 mt-2">Gestion de l'affichage</p>
+                                <h1 className="text-4xl font-bold tracking-tight">{t.admin.title}</h1>
+                                <p className="text-slate-500 dark:text-slate-400 mt-2">{t.admin.subtitle}</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <LiveIndicator displayName={page.activeDisplay} />
@@ -62,9 +74,8 @@ export default function AdminPage() {
                             onDeleteDisplay={page.handleDeleteDisplay}
                         />
                     </header>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 flex-1 overflow-hidden min-h-0">
-                        <div className="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+                    <div className="grid grid-cols-4 gap-8 flex-1 overflow-hidden min-h-0">
+                        <div className="col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
                             <ScheduleSelector
                                 activeTarget={page.activeTarget}
                                 onChangeTarget={page.setActiveTarget}
@@ -73,29 +84,121 @@ export default function AdminPage() {
                                 onDeleteSchedule={page.handleDeleteSchedule}
                             />
                         </div>
-
-                        <div className="lg:col-span-2 h-full min-h-0">
+                        <div className="col-span-2 h-full min-h-0">
                             <PlaylistEditor
                                 title={page.playlistTitle}
                                 items={page.activeItems}
                                 onDeleteMedia={page.handleDeleteMedia}
                             />
                         </div>
-
-                        <div className="lg:col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
+                            <div
+                                className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
+                                <h2 className="text-xl font-semibold mb-6">{t.admin.addMedia}</h2>
+                                <MediaUploader onUploadComplete={page.handleAddMedia}/>
+                            </div>
                             <DisplaySettings
                                 duration={page.currentDuration}
                                 onDurationChange={actions.updateDuration}
                                 playVideoAudio={page.playVideoAudio}
                                 onToggleVideoAudio={actions.toggleVideoAudio}
                             />
-                            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
-                                <h2 className="text-xl font-semibold mb-6">Ajouter un média</h2>
-                                <MediaUploader onUploadComplete={page.handleAddMedia} />
-                            </div>
-                            <AudioManager currentAudio={page.activeAudio} onUpdateAudio={page.handleUpdateAudio} />
+                            <AudioManager currentAudio={page.activeAudio} onUpdateAudio={page.handleUpdateAudio}/>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Mobile */}
+            <div
+                className="flex lg:hidden h-[100dvh] bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white flex-col">
+                {showSettings && (
+                    <SettingsPage
+                        config={config}
+                        handleSave={handleSave}
+                        onClose={() => setShowSettings(false)}
+                        onLogout={() => setIsAuthenticated(false)}
+                    />
+                )}
+                {/* En-tête mobile */}
+                <div
+                    className="sticky top-0 z-10 shrink-0 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 pt-4 pb-0">
+                    <div className="flex items-start justify-between mb-3">
+                        <div>
+                            <h1 className="text-2xl font-bold tracking-tight">{t.admin.title}</h1>
+                            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">{t.admin.subtitle}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <LiveIndicator displayName={page.activeDisplay}/>
+                            <SettingsButton onClick={() => setShowSettings(true)}/>
+                        </div>
+                    </div>
+                    <DisplayTabs
+                        displays={Object.keys(config.displays)}
+                        activeDisplay={page.activeDisplay}
+                        onSelectDisplay={page.handleSelectDisplay}
+                        onCreateDisplay={page.handleCreateDisplay}
+                        onDeleteDisplay={page.handleDeleteDisplay}
+                    />
+                    <div className="flex border-b border-slate-200 dark:border-slate-700 mt-2">
+                        {([
+                            {key: 'playlist' as MobileTab, label: t.mobile.playlist},
+                            {key: 'schedule' as MobileTab, label: t.mobile.schedule},
+                            {key: 'settings' as MobileTab, label: t.mobile.settings},
+                        ]).map(tab => (
+                            <button
+                                key={tab.key}
+                                onClick={() => setMobileTab(tab.key)}
+                                className={`flex-1 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
+                                    mobileTab === tab.key
+                                        ? 'border-blue-600 text-blue-600'
+                                        : 'border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                                }`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Contenu mobile */}
+                <div className="flex-1 overflow-y-auto p-4">
+                    {mobileTab === 'playlist' && (
+                        <div className="h-full">
+                            <div
+                                className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0 mb-1">
+                                <h2 className="text-xl font-semibold mb-6">{t.admin.addMedia}</h2>
+                                <MediaUploader onUploadComplete={page.handleAddMedia}/>
+                            </div>
+                            <PlaylistEditor
+                                title={page.playlistTitle}
+                                items={page.activeItems}
+                                onDeleteMedia={page.handleDeleteMedia}
+                            />
+                        </div>
+                    )}
+                    {mobileTab === 'schedule' && (
+                        <div className="pb-8">
+                            <ScheduleSelector
+                                activeTarget={page.activeTarget}
+                                onChangeTarget={page.setActiveTarget}
+                                schedules={page.schedules}
+                                onAddScheduleRange={actions.addScheduleRange}
+                                onDeleteSchedule={page.handleDeleteSchedule}
+                            />
+                        </div>
+                    )}
+                    {mobileTab === 'settings' && (
+                        <div className="flex flex-col gap-4 pb-8">
+                            <DisplaySettings
+                                duration={page.currentDuration}
+                                onDurationChange={actions.updateDuration}
+                                playVideoAudio={page.playVideoAudio}
+                                onToggleVideoAudio={actions.toggleVideoAudio}
+                            />
+                            <AudioManager currentAudio={page.activeAudio} onUpdateAudio={page.handleUpdateAudio}/>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface DisplaySettingsProps {
     duration: number;
@@ -13,14 +14,16 @@ export default function DisplaySettings({
                                             playVideoAudio,
                                             onToggleVideoAudio
                                         }: DisplaySettingsProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <h2 className="text-xl font-semibold mb-6">Paramètres de la Playlist</h2>
+            <h2 className="text-xl font-semibold mb-6">{t.displaySettings.title}</h2>
 
             <div className="flex flex-col gap-6">
                 <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                        Durée d'une diapositive (secondes)
+                        {t.displaySettings.slideDuration}
                     </label>
                     <input
                         type="number"
@@ -32,7 +35,7 @@ export default function DisplaySettings({
                 </div>
 
                 <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Jouer le son des vidéos</span>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.displaySettings.playVideoAudio}</span>
                     <label className="relative inline-flex items-center cursor-pointer">
                         <input
                             type="checkbox"

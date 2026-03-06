@@ -13,20 +13,27 @@ export function useSettings({ config, handleSave }: UseSettingsParams) {
 
     const updateCompanyName = useCallback((name: string) => {
         if (!config) return;
-        const updated = { ...config, settings: { ...config.settings, companyName: name } };
-        handleSave(updated);
+        handleSave({ ...config, settings: { ...config.settings, companyName: name } });
     }, [config, handleSave]);
 
     const updateLogoUrl = useCallback((url: string) => {
         if (!config) return;
-        const updated = { ...config, settings: { ...config.settings, logoUrl: url } };
-        handleSave(updated);
+        handleSave({ ...config, settings: { ...config.settings, logoUrl: url } });
     }, [config, handleSave]);
 
     const updateTheme = useCallback((theme: 'dark' | 'light') => {
         if (!config) return;
-        const updated = { ...config, settings: { ...config.settings, theme } };
-        handleSave(updated);
+        handleSave({ ...config, settings: { ...config.settings, theme } });
+    }, [config, handleSave]);
+
+    const updateWeatherLocation = useCallback((lat: number, lng: number) => {
+        if (!config) return;
+        handleSave({ ...config, settings: { ...config.settings, weatherLatitude: lat, weatherLongitude: lng } });
+    }, [config, handleSave]);
+
+    const updateLocale = useCallback((locale: 'fr' | 'en') => {
+        if (!config) return;
+        handleSave({ ...config, settings: { ...config.settings, locale } });
     }, [config, handleSave]);
 
     const changePassword = useCallback(async (newPassword: string) => {
@@ -54,23 +61,15 @@ export function useSettings({ config, handleSave }: UseSettingsParams) {
         setIsChangingPassword(false);
     }, []);
 
-    const updateWeatherLocation = useCallback((lat: number, lng: number) => {
-        if (!config) return;
-        const updated = {
-            ...config,
-            settings: { ...config.settings, weatherLatitude: lat, weatherLongitude: lng }
-        };
-        handleSave(updated);
-    }, [config, handleSave]);
-
     return {
         updateCompanyName,
         updateLogoUrl,
         updateTheme,
+        updateWeatherLocation,
+        updateLocale,
         changePassword,
         isChangingPassword,
         passwordError,
         passwordSuccess,
-        updateWeatherLocation,
     };
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface ScheduleSelectorProps {
     activeTarget: string;
@@ -19,6 +20,7 @@ export default function ScheduleSelector({
                                          }: ScheduleSelectorProps) {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const { t, translate } = useTranslation();
 
     const handleAdd = () => {
         if (startDate && endDate) {
@@ -30,10 +32,10 @@ export default function ScheduleSelector({
 
     return (
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <h2 className="text-xl font-semibold mb-6">Planification</h2>
+            <h2 className="text-xl font-semibold mb-6">{t.schedule.title}</h2>
 
             <div className="mb-6">
-                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Nouvelle programmation</h3>
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">{t.schedule.newSchedule}</h3>
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-2">
                         <input
@@ -55,7 +57,7 @@ export default function ScheduleSelector({
                         disabled={!startDate || !endDate}
                         className="w-full py-2 bg-slate-800 dark:bg-slate-600 text-white rounded-lg text-sm font-medium hover:bg-slate-700 dark:hover:bg-slate-500 disabled:opacity-50 transition-colors"
                     >
-                        Ajouter la plage
+                        {t.schedule.addRange}
                     </button>
                 </div>
             </div>
@@ -69,7 +71,7 @@ export default function ScheduleSelector({
                             : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                     }`}
                 >
-                    Affichage par défaut
+                    {t.schedule.defaultDisplay}
                 </button>
 
                 {schedules.map((rangeKey) => {
@@ -87,7 +89,7 @@ export default function ScheduleSelector({
                                         : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                                 }`}
                             >
-                                Du {start} au {end}
+                                {translate('schedule.from', { start, end })}
                             </button>
                             <button
                                 onClick={() => onDeleteSchedule(rangeKey)}

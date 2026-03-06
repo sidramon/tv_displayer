@@ -16,9 +16,8 @@ export default function WeatherWidget() {
                     ))}
                 </div>
             )}
-
             <div className="flex items-center gap-5">
-                <WeatherIcon desc={current.desc} isDay={current.isDay} sizeClasses="w-16 h-16 drop-shadow-lg" />
+                <WeatherIcon code={current.code} isDay={current.isDay} sizeClasses="w-16 h-16 drop-shadow-lg" />
                 <div className="flex flex-col text-right">
                     <span className="text-5xl font-bold leading-none">{current.temp}°</span>
                     <span className="text-lg text-gray-300 mt-1 font-medium">{current.desc}</span>

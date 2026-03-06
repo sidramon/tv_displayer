@@ -32,6 +32,7 @@ export interface GlobalSettings {
     theme: 'dark' | 'light';
     weatherLatitude: number;
     weatherLongitude: number;
+    locale: 'fr' | 'en';
 }
 
 export interface GlobalConfig {

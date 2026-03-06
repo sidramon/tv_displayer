@@ -1,6 +1,7 @@
 'use client';
 
 import { useAudioUpload } from '../../application/audio/useAudioUpload';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface AudioManagerProps {
     currentAudio: string;
@@ -9,10 +10,11 @@ interface AudioManagerProps {
 
 export default function AudioManager({ currentAudio, onUpdateAudio }: AudioManagerProps) {
     const { isUploading, handleFileChange } = useAudioUpload(onUpdateAudio);
+    const { t } = useTranslation();
 
     return (
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
-            <h2 className="text-xl font-semibold mb-6">Musique de fond</h2>
+            <h2 className="text-xl font-semibold mb-6">{t.audio.title}</h2>
 
             {currentAudio ? (
                 <div className="flex flex-col gap-4">
@@ -21,7 +23,7 @@ export default function AudioManager({ currentAudio, onUpdateAudio }: AudioManag
                         onClick={() => onUpdateAudio('')}
                         className="w-full px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/50 font-medium transition-colors"
                     >
-                        Supprimer la musique
+                        {t.audio.delete}
                     </button>
                 </div>
             ) : (
@@ -30,7 +32,7 @@ export default function AudioManager({ currentAudio, onUpdateAudio }: AudioManag
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                     </svg>
                     <span className="text-sm text-slate-600 dark:text-slate-300">
-                        {isUploading ? 'Chargement...' : 'Ajouter une musique (MP3)'}
+                        {isUploading ? t.settings.loading : t.audio.add}
                     </span>
                     <input type="file" className="hidden" accept="audio/*" onChange={handleFileChange} disabled={isUploading} />
                 </label>
