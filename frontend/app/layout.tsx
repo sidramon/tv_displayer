@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import "./global.css";
 import React from "react";
 import { locales, Locale } from "@/shared/i18n";
+import 'leaflet/dist/leaflet.css';
 import {LocaleProvider} from "@/shared/i18n/LocaleContext";
+import {ToastProvider} from "@/shared/context/ToastContext";
 
 export async function generateMetadata(): Promise<Metadata> {
     const locale: Locale = 'fr';
@@ -20,12 +22,15 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="fr">
-        <body className="antialiased overflow-hidden">
-        <LocaleProvider>
-            {children}
-        </LocaleProvider>
-        </body>
+        <html>
+            <body>
+                <LocaleProvider>
+                    <ToastProvider>
+                        {children}
+                    </ToastProvider>
+                </LocaleProvider>
+            </body>
         </html>
+
     );
 }

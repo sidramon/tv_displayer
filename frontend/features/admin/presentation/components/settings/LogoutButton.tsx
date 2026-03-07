@@ -1,5 +1,6 @@
 import { LogOut } from 'lucide-react';
 import { useTranslation } from '@/shared/i18n/useTranslation';
+import { logout } from '@/shared/api';
 
 interface Props {
     onLogout: () => void;
@@ -9,14 +10,7 @@ export default function LogoutButton({ onLogout }: Props) {
     const { t } = useTranslation();
 
     const handleLogout = async () => {
-        const token = localStorage.getItem('admin_token');
-        if (token) {
-            await fetch('/api/auth/logout', {
-                method: 'POST',
-                headers: { 'X-Admin-Token': token },
-            });
-        }
-        localStorage.removeItem('admin_token');
+        await logout();
         onLogout();
     };
 

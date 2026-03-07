@@ -13,7 +13,18 @@ def login():
         return jsonify({"status": "unauthorized"}), 401
 
     config = get_config_data()
-    stored = config.get('settings', {}).get('adminPassword') or current_app.config['ADMIN_PASSWORD']
+    stored = config.get('settings', {}).get('adminPassword') or None
+
+    if not stored:
+        stored = current_app.config['ADMIN_PASSWORD']
+
+    if not check_password(password, stored):
+        return jsonify({"status": "unauthorized"}), 401
+
+    if not stored.startswith('$2b$'):
+        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+        config.setdefault('settings', {})['adminPassword'] = hashed
+        save_config_data(config)
 
     if not check_password(password, stored):
         return jsonify({"status": "unauthorized"}), 401
@@ -50,3 +61,8 @@ def change_password():
     save_config_data(config)
 
     return jsonify({"status": "success"}), 200
+
+@auth_bp.route('/verify', methods=['GET'])
+@require_auth
+def verify():
+    return jsonify({"status": "valid"}), 200

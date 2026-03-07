@@ -2,8 +2,8 @@ import { useState, useCallback } from 'react';
 import { fetchWeather } from '../domain/weather.service';
 import { ForecastData, CurrentWeather } from '@/shared/utils/types/weather.types';
 import { useInterval } from '@/shared/hooks/useInterval';
-import { useGlobalSettings } from './useGlobalSettings';
 import { useTranslation } from '@/shared/i18n/useTranslation';
+import {useGlobalSettings} from "@/features/display/application/useGlobalSettings";
 
 const FIFTEEN_MINUTES = 900_000;
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getConfig, saveConfig } from '@/shared/api/api';
+import { getConfig, saveConfig } from '@/shared/api';
 import { GlobalConfig } from '@/shared/utils/types/config.types';
 import { useMediaActions } from './media/useMediaActions';
 import { useAudioActions } from './audio/useAudioActions';

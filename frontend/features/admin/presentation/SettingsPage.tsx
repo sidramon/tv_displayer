@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { X } from 'lucide-react';
 import { useSettings } from '../application/useSettings';
 import { GlobalConfig } from '@/shared/utils/types/config.types';
-import { uploadFile } from '@/shared/api/api';
+import { uploadFile } from '@/shared/api';
 import { useTranslation } from '@/shared/i18n/useTranslation';
 import IdentitySection from './components/settings/IdentitySection';
 import ThemeSelector from './components/settings/ThemeSelector';

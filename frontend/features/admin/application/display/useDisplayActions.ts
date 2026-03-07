@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { GlobalConfig } from '@/shared/utils/types/config.types';
-import { deleteFile } from '@/shared/api/api';
+import { deleteFile } from '@/shared/api';
+import { useToastContext } from '@/shared/context/ToastContext';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface UseDisplayActionsParams {
     config: GlobalConfig | null;
@@ -9,26 +11,37 @@ interface UseDisplayActionsParams {
 }
 
 const DEFAULT_DISPLAY_CONFIG = {
-    settings: { slideDuration: 8000, rotationLength: 2, rotationReferenceDate: "2024-01-07", playVideoAudio: false },
+    settings: {
+        slideDuration: 8000,
+        rotationLength: 2,
+        rotationReferenceDate: "2024-01-07",
+        playVideoAudio: false,
+        showAnimations: true,
+    },
     default: { items: [], audio: "" },
     schedules: {},
     rotations: { "1": { items: [], audio: "" }, "2": { items: [], audio: "" } }
 };
 
 export function useDisplayActions({ config, displayName, handleSave }: UseDisplayActionsParams) {
+    const { addToast } = useToastContext();
+    const { t } = useTranslation();
+
     const updateDuration = useCallback((seconds: number) => {
         if (!config?.displays[displayName]) return;
         const updated = { ...config };
         updated.displays[displayName].settings.slideDuration = seconds * 1000;
         handleSave(updated);
-    }, [config, displayName, handleSave]);
+        addToast(t.feedback.durationUpdated, 'success');
+    }, [config, displayName, handleSave, addToast, t]);
 
     const toggleVideoAudio = useCallback((playAudio: boolean) => {
         if (!config?.displays[displayName]) return;
         const updated = { ...config };
         updated.displays[displayName].settings.playVideoAudio = playAudio;
         handleSave(updated);
-    }, [config, displayName, handleSave]);
+        addToast(playAudio ? t.feedback.audioEnabled : t.feedback.audioDisabled, 'success');
+    }, [config, displayName, handleSave, addToast, t]);
 
     const createDisplay = useCallback((name: string) => {
         if (!config || config.displays[name]) return;
@@ -44,9 +57,15 @@ export function useDisplayActions({ config, displayName, handleSave }: UseDispla
 
         const deletePlaylistFiles = async (playlist: typeof display.default) => {
             for (const item of playlist?.items ?? []) {
-                if (item.url) await deleteFile(item.url);
+                if (item.url) {
+                    const deleted = await deleteFile(item.url);
+                    if (!deleted) addToast(t.feedback.deleteFailed, 'error');
+                }
             }
-            if (playlist?.audio) await deleteFile(playlist.audio);
+            if (playlist?.audio) {
+                const deleted = await deleteFile(playlist.audio);
+                if (!deleted) addToast(t.feedback.deleteFailed, 'error');
+            }
         };
 
         await deletePlaylistFiles(display.default);
@@ -55,7 +74,15 @@ export function useDisplayActions({ config, displayName, handleSave }: UseDispla
 
         delete updated.displays[name];
         handleSave(updated);
-    }, [config, handleSave]);
+    }, [config, handleSave, addToast, t]);
 
-    return { updateDuration, toggleVideoAudio, createDisplay, deleteDisplay };
+    const toggleAnimations = useCallback((show: boolean) => {
+        if (!config?.displays[displayName]) return;
+        const updated = { ...config };
+        updated.displays[displayName].settings.showAnimations = show;
+        handleSave(updated);
+        addToast(show ? t.feedback.animationsEnabled : t.feedback.animationsDisabled, 'success');
+    }, [config, displayName, handleSave, addToast, t]);
+
+    return { updateDuration, toggleVideoAudio, toggleAnimations, createDisplay, deleteDisplay };
 }

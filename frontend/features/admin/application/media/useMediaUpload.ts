@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
-import { uploadFile } from '@/shared/api/api';
+import { uploadFile } from '@/shared/api';
 import getCroppedImg, { PixelCrop } from '@/shared/utils/cropImage';
 import { MediaItem } from '@/shared/utils/types/config.types';
+import { useToastContext } from '@/shared/context/ToastContext';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
     const [pendingFiles, setPendingFiles] = useState<File[]>([]);
@@ -11,6 +13,8 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<PixelCrop | null>(null);
     const [isUploading, setIsUploading] = useState(false);
+    const { addToast } = useToastContext();
+    const { t } = useTranslation();
 
     const onCropComplete = useCallback((_: any, pixels: PixelCrop) => {
         setCroppedAreaPixels(pixels);
@@ -30,7 +34,12 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
         if (next.type.startsWith('video/')) {
             setIsUploading(true);
             const url = await uploadFile(next);
-            if (url) onUploadComplete({ id: Date.now().toString(), type: 'video', url });
+            if (url) {
+                onUploadComplete({ id: Date.now().toString(), type: 'video', url });
+                addToast(t.feedback.uploadSuccess, 'success');
+            } else {
+                addToast(t.feedback.uploadFailed, 'error');
+            }
             processQueue(rest);
         } else if (next.type.startsWith('image/')) {
             setCurrentFile(next);
@@ -46,12 +55,7 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
         } else {
             processQueue(rest);
         }
-    }, [onUploadComplete]);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.length) processQueue(Array.from(e.target.files));
-        e.target.value = '';
-    };
+    }, [onUploadComplete, addToast, t]);
 
     const handleUploadCrop = async () => {
         if (!imageSrc || !croppedAreaPixels || !currentFile) return;
@@ -60,9 +64,17 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
             const blob = await getCroppedImg(imageSrc, croppedAreaPixels);
             if (blob) {
                 const url = await uploadFile(new File([blob], currentFile.name, { type: 'image/jpeg' }));
-                if (url) onUploadComplete({ id: Date.now().toString(), type: 'image', url });
+                if (url) {
+                    onUploadComplete({ id: Date.now().toString(), type: 'image', url });
+                    addToast(t.feedback.uploadSuccess, 'success');
+                } else {
+                    addToast(t.feedback.uploadFailed, 'error');
+                }
             }
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+            addToast(t.feedback.uploadFailed, 'error');
+        }
         processQueue(pendingFiles);
     };
 
@@ -71,8 +83,16 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
         setIsUploading(true);
         try {
             const url = await uploadFile(currentFile);
-            if (url) onUploadComplete({ id: Date.now().toString(), type: 'image', url });
-        } catch (e) { console.error(e); }
+            if (url) {
+                onUploadComplete({ id: Date.now().toString(), type: 'image', url });
+                addToast(t.feedback.uploadSuccess, 'success');
+            } else {
+                addToast(t.feedback.uploadFailed, 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            addToast(t.feedback.uploadFailed, 'error');
+        }
         processQueue(pendingFiles);
     };
 
@@ -80,7 +100,10 @@ export function useMediaUpload(onUploadComplete: (item: MediaItem) => void) {
         imageSrc, crop, zoom, isUploading,
         pendingCount: pendingFiles.length,
         setCrop, setZoom, onCropComplete,
-        handleFileChange,
+        handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files?.length) processQueue(Array.from(e.target.files));
+            e.target.value = '';
+        },
         handleUploadCrop,
         handleUploadOriginal,
         handleSkip: () => processQueue(pendingFiles),

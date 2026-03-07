@@ -1,34 +1,30 @@
 import { useState } from 'react';
+import { login } from '@/shared/api';
+import { useToastContext } from '@/shared/context/ToastContext';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 export function useLogin(onLogin: () => void) {
     const [password, setPassword] = useState('');
-    const [errorKey, setErrorKey] = useState<'error' | 'connectionError' | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { addToast } = useToastContext();
+    const { t } = useTranslation();
 
     const handleSubmit = async () => {
         setIsLoading(true);
-        setErrorKey(null);
-
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('admin_token', data.token);
+            const token = await login(password);
+            if (token) {
+                localStorage.setItem('admin_token', token);
+                addToast(t.feedback.loginSuccess, 'success');
                 onLogin();
             } else {
-                setErrorKey('error');
+                addToast(t.feedback.loginFailed, 'error');
             }
         } catch {
-            setErrorKey('connectionError');
+            addToast(t.feedback.connectionError, 'error');
         }
-
         setIsLoading(false);
     };
 
-    return { password, setPassword, errorKey, isLoading, handleSubmit };
+    return { password, setPassword, isLoading, handleSubmit };
 }

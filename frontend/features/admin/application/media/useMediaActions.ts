@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { GlobalConfig, MediaItem } from '@/shared/utils/types/config.types';
-import { deleteFile } from '@/shared/api/api';
+import { deleteFile } from '@/shared/api';
+import { useToastContext } from '@/shared/context/ToastContext';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 
 interface UseMediaActionsParams {
     config: GlobalConfig | null;
@@ -9,6 +11,9 @@ interface UseMediaActionsParams {
 }
 
 export function useMediaActions({ config, displayName, handleSave }: UseMediaActionsParams) {
+    const { addToast } = useToastContext();
+    const { t } = useTranslation();
+
     const addMedia = useCallback((newItem: MediaItem, target: string) => {
         if (!config?.displays[displayName]) return;
         const updated = { ...config };
@@ -18,7 +23,7 @@ export function useMediaActions({ config, displayName, handleSave }: UseMediaAct
             display.default.items.push(newItem);
         } else if (target.startsWith('schedule-')) {
             const key = target.replace('schedule-', '');
-            if (!display.schedules[key]) display.schedules[key] = { items: [], audio: "" };
+            if (!display.schedules[key]) display.schedules[key] = { items: [], audio: '' };
             display.schedules[key].items.push(newItem);
         }
 
@@ -40,9 +45,14 @@ export function useMediaActions({ config, displayName, handleSave }: UseMediaAct
             display.schedules[key].items.splice(index, 1);
         }
 
-        if (itemToDelete?.url) await deleteFile(itemToDelete.url);
+        if (itemToDelete?.url) {
+            const deleted = await deleteFile(itemToDelete.url);
+            if (!deleted) addToast(t.feedback.deleteFailed, 'error');
+            else addToast(t.feedback.mediaDeleted, 'success');
+        }
+
         handleSave(updated);
-    }, [config, displayName, handleSave]);
+    }, [config, displayName, handleSave, addToast, t]);
 
     return { addMedia, deleteMedia };
 }

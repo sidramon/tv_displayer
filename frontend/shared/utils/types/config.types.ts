@@ -17,6 +17,7 @@ export interface DisplaySettings {
     rotationLength: number;
     rotationReferenceDate: string;
     playVideoAudio?: boolean;
+    showAnimations: boolean;
 }
 
 export interface DisplayConfig {
@@ -33,6 +34,8 @@ export interface GlobalSettings {
     weatherLatitude: number;
     weatherLongitude: number;
     locale: 'fr' | 'en';
+    headerThemeKey: string;
+    displayAnimationKey: string;
 }
 
 export interface GlobalConfig {

@@ -6,13 +6,31 @@ interface DisplaySettingsProps {
     onDurationChange: (seconds: number) => void;
     playVideoAudio: boolean;
     onToggleVideoAudio: (playAudio: boolean) => void;
+    showAnimations: boolean;
+    onToggleAnimations: (show: boolean) => void;
+}
+
+function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+    return (
+        <label className="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+            />
+            <div className="w-11 h-6 bg-slate-200 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+        </label>
+    );
 }
 
 export default function DisplaySettings({
                                             duration,
                                             onDurationChange,
                                             playVideoAudio,
-                                            onToggleVideoAudio
+                                            onToggleVideoAudio,
+                                            showAnimations,
+                                            onToggleAnimations,
                                         }: DisplaySettingsProps) {
     const { t } = useTranslation();
 
@@ -36,15 +54,12 @@ export default function DisplaySettings({
 
                 <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.displaySettings.playVideoAudio}</span>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            className="sr-only peer"
-                            checked={playVideoAudio}
-                            onChange={(e) => onToggleVideoAudio(e.target.checked)}
-                        />
-                        <div className="w-11 h-6 bg-slate-200 dark:bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
+                    <Toggle checked={playVideoAudio} onChange={onToggleVideoAudio} />
+                </div>
+
+                <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{t.displaySettings.showAnimations}</span>
+                    <Toggle checked={showAnimations} onChange={onToggleAnimations} />
                 </div>
             </div>
         </div>

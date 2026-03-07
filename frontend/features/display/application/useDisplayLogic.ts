@@ -1,6 +1,6 @@
 // IMPORT SECTION
 import { useState, useEffect, useCallback } from 'react';
-import { getConfig } from '@/shared/api/api';
+import { getConfig } from '@/shared/api';
 import { Playlist } from '@/shared/utils/types/config.types';
 import { getActivePlaylist } from '../domain/playlist.service';
 import {useInterval} from "@/shared/hooks/useInterval";
@@ -10,6 +10,7 @@ export function useDisplayLogic(displayName: string = 'default') {
     const [playlist, setPlaylist] = useState<Playlist | null>(null);
     const [duration, setDuration] = useState<number>(8000);
     const [playVideoAudio, setPlayVideoAudio] = useState<boolean>(false);
+    const [showAnimations, setShowAnimations] = useState<boolean>(true);
     const [isStarted, setIsStarted] = useState<boolean>(false);
 
     const loadData = useCallback(async () => {
@@ -19,6 +20,7 @@ export function useDisplayLogic(displayName: string = 'default') {
             setPlaylist(getActivePlaylist(displayConfig));
             setDuration(displayConfig.settings?.slideDuration || 8000);
             setPlayVideoAudio(displayConfig.settings?.playVideoAudio || false);
+            setShowAnimations(displayConfig.settings?.showAnimations ?? true);
         }
     }, [displayName]);
 
@@ -32,7 +34,8 @@ export function useDisplayLogic(displayName: string = 'default') {
         playlist,
         duration,
         playVideoAudio,
+        showAnimations,
         isStarted,
-        startDisplay
+        startDisplay,
     };
 }

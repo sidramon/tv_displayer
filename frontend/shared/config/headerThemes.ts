@@ -1,0 +1,43 @@
+export const HEADER_THEMES = {
+    'blue-dark': {
+        labelFr: 'Bleu foncé',
+        labelEn: 'Dark blue',
+        bg: 'bg-blue-950',
+        text: 'text-white',
+        subText: 'text-blue-300',
+        mutedText: 'text-gray-300',
+        mutedText2: 'text-gray-400',
+        borderColor: 'border-gray-700',
+        maxMinValue: 'text-white',
+        border: 'border-blue-900',
+        preview: 'bg-blue-950',
+    },
+    'white-blue': {
+        labelFr: 'Blanc',
+        labelEn: 'White',
+        bg: 'bg-white',
+        text: 'text-blue-950',
+        subText: 'text-blue-400',
+        mutedText: 'text-blue-700',
+        mutedText2: 'text-blue-400',
+        borderColor: 'border-blue-200',
+        maxMinValue: 'text-blue-950',
+        border: 'border-slate-200',
+        preview: 'bg-white border border-slate-300',
+    },
+    'orange': {
+        labelFr: 'Orange',
+        labelEn: 'Orange',
+        bg: 'bg-orange-600',
+        text: 'text-white',
+        subText: 'text-orange-100',
+        mutedText: 'text-orange-100',
+        mutedText2: 'text-orange-200',
+        borderColor: 'border-orange-500',
+        maxMinValue: 'text-white',
+        border: 'border-orange-700',
+        preview: 'bg-orange-600',
+    },
+} as const;
+
+export type HeaderThemeKey = keyof typeof HEADER_THEMES;

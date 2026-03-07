@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { getConfig } from '@/shared/api/api';
+import { getConfig } from '@/shared/api';
 import { GlobalSettings } from '@/shared/utils/types/config.types';
 import { useInterval } from '@/shared/hooks/useInterval';
 
