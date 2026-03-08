@@ -144,5 +144,6 @@ export const en = {
         audioDisabled: 'Video audio disabled',
         animationsEnabled: 'Animations enabled',
         animationsDisabled: 'Animations disabled',
+        displayRenamed: 'Display renamed',
     },
 } as const;

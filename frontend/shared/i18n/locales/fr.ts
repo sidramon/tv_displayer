@@ -143,6 +143,7 @@ export const fr = {
         audioDisabled: 'Audio vidéo désactivé',
         animationsEnabled: 'Animations activées',
         animationsDisabled: 'Animations désactivées',
+        displayRenamed: 'Écran renommé',
     },
 
 } as const;

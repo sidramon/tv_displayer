@@ -84,5 +84,14 @@ export function useDisplayActions({ config, displayName, handleSave }: UseDispla
         addToast(show ? t.feedback.animationsEnabled : t.feedback.animationsDisabled, 'success');
     }, [config, displayName, handleSave, addToast, t]);
 
-    return { updateDuration, toggleVideoAudio, toggleAnimations, createDisplay, deleteDisplay };
+    const renameDisplay = useCallback((oldName: string, newName: string) => {
+        if (!config || !config.displays[oldName] || config.displays[newName]) return;
+        const updated = { ...config };
+        updated.displays[newName] = updated.displays[oldName];
+        delete updated.displays[oldName];
+        handleSave(updated);
+        addToast(t.feedback.displayRenamed, 'success');
+    }, [config, handleSave, addToast, t]);
+
+    return { updateDuration, toggleVideoAudio, toggleAnimations, createDisplay, deleteDisplay, renameDisplay };
 }

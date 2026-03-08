@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
 import bcrypt
-from utils.auth import require_auth, check_password, generate_token, active_tokens
+from utils.auth import require_auth, check_password, generate_token, add_token, remove_token
 from utils.config_service import get_config_data, save_config_data
 
 auth_bp = Blueprint('auth_api', __name__, url_prefix='/api/auth')
@@ -14,17 +14,8 @@ def login():
 
     config = get_config_data()
     stored = config.get('settings', {}).get('adminPassword') or None
-
     if not stored:
         stored = current_app.config['ADMIN_PASSWORD']
-
-    if not check_password(password, stored):
-        return jsonify({"status": "unauthorized"}), 401
-
-    if not stored.startswith('$2b$'):
-        hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        config.setdefault('settings', {})['adminPassword'] = hashed
-        save_config_data(config)
 
     if not check_password(password, stored):
         return jsonify({"status": "unauthorized"}), 401
@@ -36,14 +27,14 @@ def login():
         save_config_data(config)
 
     token = generate_token()
-    active_tokens.add(token)
+    add_token(token)
     return jsonify({"status": "success", "token": token}), 200
 
 @auth_bp.route('/logout', methods=['POST'])
 @require_auth
 def logout():
     token = request.headers.get('X-Admin-Token')
-    active_tokens.discard(token)
+    remove_token(token)
     return jsonify({"status": "success"}), 200
 
 @auth_bp.route('/change-password', methods=['POST'])

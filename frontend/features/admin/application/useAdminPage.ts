@@ -14,6 +14,7 @@ export function useAdminPage(
         createDisplay: (name: string) => void;
         deleteDisplay: (name: string) => void;
         toggleAnimations: (show: boolean) => void;
+        renameDisplay: (oldName: string, newName: string) => void;
     },
     activeDisplay: string,
     setActiveDisplay: (name: string) => void,
@@ -90,6 +91,11 @@ export function useAdminPage(
             const newKey = `${start}_${end}`;
             if (activeTarget === `schedule-${oldKey}`) setActiveTarget(`schedule-${newKey}`);
             addToast(t.feedback.scheduleUpdated, 'success');
+        },
+        handleRenameDisplay: (oldName: string, newName: string) => {
+            actions.renameDisplay(oldName, newName);
+            if (activeDisplay === oldName) setActiveDisplay(newName);
+            addToast(t.feedback.displayRenamed, 'success');
         },
     };
 }

@@ -99,6 +99,7 @@ export default function AdminPage() {
                             onSelectDisplay={page.handleSelectDisplay}
                             onCreateDisplay={page.handleCreateDisplay}
                             onDeleteDisplay={page.handleDeleteDisplay}
+                            onRenameDisplay={page.handleRenameDisplay}
                         />
                     </header>
                     <div className="grid grid-cols-4 gap-8 flex-1 overflow-hidden min-h-0">
@@ -155,6 +156,7 @@ export default function AdminPage() {
                         onSelectDisplay={page.handleSelectDisplay}
                         onCreateDisplay={page.handleCreateDisplay}
                         onDeleteDisplay={page.handleDeleteDisplay}
+                        onRenameDisplay={page.handleRenameDisplay}
                     />
                     <div className="flex border-b border-slate-200 dark:border-slate-700 mt-2">
                         {([

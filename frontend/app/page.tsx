@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { getConfig } from '@/shared/api/api';
+import { getConfig } from '@/shared/api';
 import { GlobalSettings } from '@/shared/utils/types/config.types';
 import { useTranslation } from '@/shared/i18n/useTranslation';
 

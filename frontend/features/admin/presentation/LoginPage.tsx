@@ -8,7 +8,7 @@ interface LoginPageProps {
 }
 
 export default function LoginPage({ onLogin }: LoginPageProps) {
-    const { password, setPassword, errorKey, isLoading, handleSubmit } = useLogin(onLogin);
+    const { password, setPassword, isLoading, handleSubmit } = useLogin(onLogin);
     const { t } = useTranslation();
 
     return (
@@ -24,7 +24,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                         placeholder={t.login.password}
                         className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     />
-                    {errorKey && <p className="text-red-500 text-sm">{t.login[errorKey]}</p>}
                     <button
                         onClick={handleSubmit}
                         disabled={isLoading}
