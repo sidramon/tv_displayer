@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { ScheduleDefinition, getActiveSlotIndex, getSlotDateRange, fmtDate, isSimpleSchedule, isScheduleActive } from '@/shared/utils/types';
+import { useTranslation } from '@/shared/i18n/useTranslation';
 import ScheduleForm from './ScheduleForm';
 import ScheduleMenu from './ScheduleMenu';
 
@@ -23,6 +24,7 @@ export default function ScheduleSelector({
                                              onDeleteSchedule,
                                              onEditSchedule,
                                          }: ScheduleSelectorProps) {
+    const { t, translate } = useTranslation();
     const [showForm, setShowForm]   = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [expanded, setExpanded]   = useState<Record<string, boolean>>({});
@@ -42,13 +44,13 @@ export default function ScheduleSelector({
 
     return (
         <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-            <h2 className="text-xl font-semibold mb-6">Programmation</h2>
+            <h2 className="text-xl font-semibold mb-6">{t.schedule.title}</h2>
 
             <button
                 onClick={() => setShowForm(o => !o)}
                 className="flex items-center justify-between w-full px-4 py-2.5 mb-4 rounded-xl bg-slate-100 dark:bg-slate-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
             >
-                Nouvelle programmation
+                {t.schedule.newSchedule}
                 {showForm ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
@@ -57,7 +59,6 @@ export default function ScheduleSelector({
                     <ScheduleForm
                         onSave={handleAdd}
                         onCancel={() => setShowForm(false)}
-                        saveLabel="Ajouter"
                     />
                 </div>
             )}
@@ -65,12 +66,13 @@ export default function ScheduleSelector({
             {editingId && schedules[editingId] && (
                 <div className="fixed inset-0 z-[200] bg-black/50 flex items-center justify-center p-4">
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-lg font-semibold">Modifier la programmation</h3>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                            {t.schedule.editModal}
+                        </h3>
                         <ScheduleForm
                             initial={schedules[editingId]}
                             onSave={(def) => { onEditSchedule(editingId, def); setEditingId(null); }}
                             onCancel={() => setEditingId(null)}
-                            saveLabel="Enregistrer"
                         />
                     </div>
                 </div>
@@ -78,6 +80,7 @@ export default function ScheduleSelector({
 
             <div className="flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-6">
 
+                {/* Défaut */}
                 <button
                     onClick={() => onChangeTarget('default')}
                     className={`px-4 py-3 rounded-xl text-left font-medium transition-colors ${
@@ -86,7 +89,7 @@ export default function ScheduleSelector({
                             : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
                     }`}
                 >
-                    Affichage par défaut
+                    {t.schedule.defaultDisplay}
                 </button>
 
                 {Object.entries(schedules).map(([id, def]) => {
@@ -114,13 +117,19 @@ export default function ScheduleSelector({
                                     <div className="flex items-center gap-2">
                                         <span className="font-medium text-sm">{def.name}</span>
                                         {active && (
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isActive ? 'bg-blue-500 text-white' : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'}`}>
-                                                en cours
+                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                                isActive
+                                                    ? 'bg-blue-500 text-white'
+                                                    : 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                                            }`}>
+                                                {t.schedule.inProgress}
                                             </span>
                                         )}
                                     </div>
-                                    <div className={`text-xs mt-0.5 ${isActive ? 'text-blue-200' : 'text-slate-400 dark:text-slate-500'}`}>
-                                        {fmtDate(start)}{end ? ` → ${fmtDate(end)}` : ' · permanent'}
+                                    <div className={`text-xs mt-0.5 ${
+                                        isActive ? 'text-blue-200' : 'text-slate-400 dark:text-slate-500'
+                                    }`}>
+                                        {fmtDate(start)}{end ? ` → ${fmtDate(end)}` : ` · ${t.schedule.permanent}`}
                                     </div>
                                 </button>
                                 <ScheduleMenu
@@ -139,6 +148,8 @@ export default function ScheduleSelector({
 
                     return (
                         <div key={id} className="flex flex-col gap-1">
+
+                            {/* En-tête */}
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setExpanded(prev => ({ ...prev, [id]: !prev[id] }))}
@@ -149,21 +160,33 @@ export default function ScheduleSelector({
                                     }`}
                                 >
                                     <div className="flex items-center justify-between gap-2">
-                                        <span className={`font-medium text-sm ${isThisSchedule ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-300'}`}>
+                                        <span className={`font-medium text-sm ${
+                                            isThisSchedule
+                                                ? 'text-blue-700 dark:text-blue-300'
+                                                : 'text-slate-700 dark:text-slate-300'
+                                        }`}>
                                             {def.name}
                                         </span>
                                         <div className="flex items-center gap-1.5 shrink-0">
-                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${isThisSchedule ? 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300' : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400'}`}>
-                                                {def.slots.length} période{def.slots.length > 1 ? 's' : ''}
+                                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                                isThisSchedule
+                                                    ? 'bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300'
+                                                    : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400'
+                                            }`}>
+                                                {translate('schedule.periodsLabel', { count: String(def.slots.length) })}
                                             </span>
                                             {isOpen
-                                                ? <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
-                                                : <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                                                ? <ChevronUp className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                                                : <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                                             }
                                         </div>
                                     </div>
-                                    <div className={`text-xs mt-0.5 ${isThisSchedule ? 'text-blue-500 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}`}>
-                                        Maintenant : {def.slots[activeSlotIdx]?.name ?? `Période ${activeSlotIdx + 1}`}
+                                    <div className={`text-xs mt-0.5 ${
+                                        isThisSchedule
+                                            ? 'text-blue-500 dark:text-blue-400'
+                                            : 'text-slate-400 dark:text-slate-500'
+                                    }`}>
+                                        {t.schedule.now} : {def.slots[activeSlotIdx]?.name ?? translate('schedule.defaultPeriodName', { n: String(activeSlotIdx + 1) })}
                                     </div>
                                 </button>
                                 <ScheduleMenu
@@ -172,6 +195,7 @@ export default function ScheduleSelector({
                                 />
                             </div>
 
+                            {/* Slots */}
                             {isOpen && (
                                 <div className="flex flex-col gap-1 pl-4">
                                     {def.slots.map((slot, slotIndex) => {
@@ -187,7 +211,7 @@ export default function ScheduleSelector({
                                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${
                                                     isActive
                                                         ? 'bg-blue-600 text-white shadow-md'
-                                                        : 'bg-slate-50 dark:bg-slate-750 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                                                        : 'bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
                                                 }`}
                                             >
                                                 <span className={`w-2 h-2 rounded-full shrink-0 ${
@@ -196,15 +220,27 @@ export default function ScheduleSelector({
                                                         : isActive ? 'bg-blue-300' : 'bg-slate-300 dark:bg-slate-500'
                                                 }`} />
                                                 <div className="flex-1 min-w-0">
-                                                    <div className={`text-sm font-medium truncate ${isActive ? 'text-white' : 'text-slate-700 dark:text-slate-300'}`}>
+                                                    <div className={`text-sm font-medium truncate ${
+                                                        isActive
+                                                            ? 'text-white'
+                                                            : 'text-slate-700 dark:text-slate-300'
+                                                    }`}>
                                                         {slot.name}
                                                         {isCurrent && (
-                                                            <span className={`ml-2 text-xs font-normal ${isActive ? 'text-blue-200' : 'text-blue-500 dark:text-blue-400'}`}>
-                                                                · en cours
+                                                            <span className={`ml-2 text-xs font-normal ${
+                                                                isActive
+                                                                    ? 'text-blue-200'
+                                                                    : 'text-blue-500 dark:text-blue-400'
+                                                            }`}>
+                                                                · {t.schedule.inProgress}
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <div className={`text-xs mt-0.5 ${isActive ? 'text-blue-200' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                    <div className={`text-xs mt-0.5 ${
+                                                        isActive
+                                                            ? 'text-blue-200'
+                                                            : 'text-slate-400 dark:text-slate-500'
+                                                    }`}>
                                                         {fmtDate(start)} → {fmtDate(end)}
                                                     </div>
                                                 </div>
