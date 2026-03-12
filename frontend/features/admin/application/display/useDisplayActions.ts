@@ -69,7 +69,13 @@ export function useDisplayActions({ config, displayName, handleSave }: UseDispla
         };
 
         await deletePlaylistFiles(display.default);
-        for (const schedule of Object.values(display.schedules ?? {})) await deletePlaylistFiles(schedule);
+        for (const schedule of Object.values(display.schedules ?? {})) {
+            if (schedule.slots?.length) {
+                for (const slot of schedule.slots) await deletePlaylistFiles(slot);
+            } else {
+                await deletePlaylistFiles({ items: schedule.items ?? [], audio: schedule.audio ?? '' });
+            }
+        }
         for (const rotation of Object.values(display.rotations ?? {})) await deletePlaylistFiles(rotation);
 
         delete updated.displays[name];

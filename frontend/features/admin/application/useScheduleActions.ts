@@ -48,13 +48,13 @@ export function useScheduleActions({ config, displayName, handleSave }: UseSched
         const existing = updated.displays[displayName].schedules[id];
         if (!existing) return;
 
-        const mergedSlots = def.slots.map((slot, i) => ({
+        const mergedSlots = (def.slots ?? []).map((slot, i) => ({
             ...slot,
-            items: existing.slots[i]?.items ?? [] as MediaItem[],
-            audio: existing.slots[i]?.audio ?? '',
+            items: existing.slots?.[i]?.items ?? [] as MediaItem[],
+            audio: existing.slots?.[i]?.audio ?? '',
         }));
 
-        const removedSlots = existing.slots.slice(def.slots.length);
+        const removedSlots = (existing.slots ?? []).slice((def.slots ?? []).length);
         for (const slot of removedSlots) {
             for (const item of slot.items ?? []) {
                 if (item.url) await deleteFile(item.url);
