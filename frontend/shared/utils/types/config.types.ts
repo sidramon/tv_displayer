@@ -1,4 +1,5 @@
 // CONFIGURATION TYPES SECTION
+import { ScheduleDefinition } from "@/shared/utils/types";
 
 export interface MediaItem {
     id: string;
@@ -22,8 +23,8 @@ export interface DisplaySettings {
 
 export interface DisplayConfig {
     settings: DisplaySettings;
-    default: Playlist;
-    schedules: Record<string, Playlist>;
+    default: Playlist & { mergeWithSchedules?: boolean };
+    schedules: Record<string, ScheduleDefinition>;
     rotations: Record<string, Playlist>;
 }
 
@@ -41,6 +42,7 @@ export interface GlobalSettings {
 export interface GlobalConfig {
     settings: GlobalSettings;
     displays: Record<string, DisplayConfig>;
+    version?: number;
 }
 
 export interface ConfigResponse {

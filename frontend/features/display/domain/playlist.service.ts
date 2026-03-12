@@ -1,39 +1,47 @@
-// IMPORT SECTION
 import { DisplayConfig, Playlist } from '@/shared/utils/types/config.types';
+import {ScheduleDefinition, getActiveSlotIndex, isSimpleSchedule, isScheduleActive} from '@/shared/utils/types';
 
-// SERVICE SECTION
 export function getActivePlaylist(config: DisplayConfig, targetDate: Date = new Date()): Playlist {
     const offset = targetDate.getTimezoneOffset() * 60000;
     const localTarget = new Date(targetDate.getTime() - offset);
-    const targetTime = localTarget.getTime();
+
+    const activeSlots: { items: Playlist['items']; audio: string }[] = [];
 
     if (config.schedules) {
-        for (const [rangeKey, playlist] of Object.entries(config.schedules)) {
-            if (playlist.items.length === 0) continue;
+        for (const schedule of Object.values(config.schedules) as ScheduleDefinition[]) {
+            if (!schedule?.startDate) continue;
+            if (!isScheduleActive(schedule, localTarget)) continue;
 
-            const [startStr, endStr] = rangeKey.split('_');
-            const start = new Date(`${startStr}T00:00:00`).getTime();
-            const end = new Date(`${endStr}T23:59:59`).getTime();
-
-            if (targetTime >= start && targetTime <= end) {
-                return playlist;
+            if (isSimpleSchedule(schedule)) {
+                if (!schedule.items?.length) continue;
+                activeSlots.push({ items: schedule.items, audio: schedule.audio ?? '' });
+            } else {
+                if (!schedule.slots?.length || !schedule.cycleLength) continue;
+                const slotIndex = getActiveSlotIndex(schedule);
+                const slot = schedule.slots[slotIndex];
+                if (!slot?.items?.length) continue;
+                activeSlots.push({ items: slot.items, audio: slot.audio });
             }
         }
     }
 
+    if (activeSlots.length > 0) {
+        const mergedItems = activeSlots.flatMap(s => s.items);
+        const mergedAudio = activeSlots.find(s => s.audio)?.audio ?? '';
+
+
+        return {
+            items: [...config.default.items, ...mergedItems],
+            audio: mergedAudio || config.default.audio,
+        };
+    }
+
     if (config.settings.rotationReferenceDate) {
         const refDate = new Date(config.settings.rotationReferenceDate);
-        const diffTime = Math.abs(targetDate.getTime() - refDate.getTime());
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-        const currentWeek = Math.floor(diffDays / 7);
-
-        const rotationLength = config.settings.rotationLength || 1;
-        const rotationIndex = (currentWeek % rotationLength) + 1;
-        const rotationKey = rotationIndex.toString();
-
-        if (config.rotations && config.rotations[rotationKey] && config.rotations[rotationKey].items.length > 0) {
-            return config.rotations[rotationKey];
-        }
+        const diffDays = Math.floor(Math.abs(targetDate.getTime() - refDate.getTime()) / 86_400_000);
+        const rotationIndex = (Math.floor(diffDays / 7) % (config.settings.rotationLength || 1)) + 1;
+        const rotation = config.rotations?.[rotationIndex.toString()];
+        if (rotation?.items?.length) return rotation;
     }
 
     return config.default;

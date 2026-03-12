@@ -16,19 +16,27 @@ export async function getConfig(): Promise<ConfigResponse | null> {
     }
 }
 
-export async function saveConfig(newConfig: GlobalConfig): Promise<boolean> {
+export type SaveConfigResult =
+    | { status: 'success'; version: number }
+    | { status: 'conflict'; current: GlobalConfig; message: string }
+    | { status: 'error' };
+
+export async function saveConfig(newConfig: GlobalConfig): Promise<SaveConfigResult> {
     try {
         const response = await fetch('/api/config', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...getAuthHeaders(),
-            },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             body: JSON.stringify(newConfig),
         });
-        return response.ok;
+
+        const data = await response.json();
+
+        if (response.status === 409) return { status: 'conflict', ...data };
+        if (!response.ok) return { status: 'error' };
+
+        return { status: 'success', version: data.version };
     } catch (error) {
         console.error('Erreur sauvegarde config:', error);
-        return false;
+        return { status: 'error' };
     }
 }

@@ -20,19 +20,35 @@ export function useAdminLogic(displayName: string = 'default') {
     }, []);
 
     const handleSave = useCallback(async (newConfig: GlobalConfig) => {
-        setConfig(newConfig);
-        await saveConfig(newConfig);
+        const result = await saveConfig(newConfig);
+
+        if (result.status === 'success') {
+            setConfig({ ...newConfig, version: result.version });
+
+        } else if (result.status === 'conflict') {
+            setConfig(result.current);
+            // TODO: afficher une bannière/toast de conflit dans l'UI
+            console.warn('Conflit de version — config locale mise à jour avec la version serveur.');
+            alert(`Conflit détecté : ${result.message}\nLa configuration a été rechargée.`);
+
+        } else {
+            console.error('Échec de la sauvegarde.');
+        }
     }, []);
 
     const params = { config, displayName, handleSave };
+
+    const { onAddSchedule, onDeleteSchedule, onEditSchedule } = useScheduleActions(params);
 
     return {
         config,
         isLoading,
         handleSave,
+        onAddSchedule,
+        onDeleteSchedule,
+        onEditSchedule,
         ...useMediaActions(params),
         ...useAudioActions(params),
-        ...useScheduleActions(params),
         ...useDisplayActions(params),
     };
 }

@@ -9,7 +9,7 @@ import MediaUploader from './components/MediaUploader';
 import AudioManager from './components/AudioManager';
 import DisplaySettings from './components/DisplaySettings';
 import PlaylistEditor from './components/PlaylistEditor';
-import ScheduleSelector from './components/ScheduleSelector';
+import ScheduleSelector from './components/schedule/ScheduleSelector';
 import DisplayTabs from './components/DisplayTabs';
 import LiveIndicator from './components/LiveIndicator';
 import SettingsButton from './components/SettingsButton';
@@ -108,7 +108,7 @@ export default function AdminPage() {
                                 activeTarget={page.activeTarget}
                                 onChangeTarget={page.setActiveTarget}
                                 schedules={page.schedules}
-                                onAddScheduleRange={actions.addScheduleRange}
+                                onAddSchedule={actions.onAddSchedule}
                                 onDeleteSchedule={page.handleDeleteSchedule}
                                 onEditSchedule={page.handleEditSchedule}
                             />
@@ -199,7 +199,7 @@ export default function AdminPage() {
                                 activeTarget={page.activeTarget}
                                 onChangeTarget={page.setActiveTarget}
                                 schedules={page.schedules}
-                                onAddScheduleRange={actions.addScheduleRange}
+                                onAddSchedule={actions.onAddSchedule}
                                 onDeleteSchedule={page.handleDeleteSchedule}
                                 onEditSchedule={page.handleEditSchedule}
                             />
