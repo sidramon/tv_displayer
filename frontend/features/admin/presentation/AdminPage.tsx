@@ -118,6 +118,7 @@ export default function AdminPage() {
                                 title={page.playlistTitle}
                                 items={page.activeItems}
                                 onDeleteMedia={page.handleDeleteMedia}
+                                onUpdateDuration={page.handleUpdateMediaDuration}
                             />
                         </div>
                         <div className="col-span-1 flex flex-col gap-6 overflow-y-auto pr-2 custom-scrollbar">
@@ -190,6 +191,7 @@ export default function AdminPage() {
                                 title={page.playlistTitle}
                                 items={page.activeItems}
                                 onDeleteMedia={page.handleDeleteMedia}
+                                onUpdateDuration={page.handleUpdateMediaDuration}
                             />
                         </div>
                     )}

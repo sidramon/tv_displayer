@@ -44,6 +44,32 @@ export function useMediaActions({ config, displayName, handleSave }: UseMediaAct
         handleSave(updated);
     }, [config, displayName, handleSave]);
 
+    const updateMediaDuration = useCallback((index: number, target: string, duration: number | undefined) => {
+        if (!config?.displays[displayName]) return;
+        const updated = { ...config };
+        const display = updated.displays[displayName];
+
+        const setDuration = (items: MediaItem[]) => {
+            if (!items[index]) return;
+            items[index] = { ...items[index], duration };
+        };
+
+        if (target === 'default') {
+            setDuration(display.default.items);
+        } else if (target.startsWith('schedule-')) {
+            const { id, slotIndex } = parseScheduleTarget(target);
+            if (slotIndex !== null) {
+                if (!display.schedules[id]?.slots?.[slotIndex]) return;
+                setDuration(display.schedules[id].slots![slotIndex].items);
+            } else {
+                if (!display.schedules[id]?.items) return;
+                setDuration(display.schedules[id].items!);
+            }
+        }
+
+        handleSave(updated);
+    }, [config, displayName, handleSave]);
+
     const deleteMedia = useCallback(async (index: number, target: string) => {
         if (!config?.displays[displayName]) return;
         const updated = { ...config };
@@ -75,5 +101,5 @@ export function useMediaActions({ config, displayName, handleSave }: UseMediaAct
         handleSave(updated);
     }, [config, displayName, handleSave, addToast, t]);
 
-    return { addMedia, deleteMedia };
+    return { addMedia, deleteMedia, updateMediaDuration };
 }

@@ -9,6 +9,7 @@ export function useAdminPage(
     actions: {
         addMedia: (item: MediaItem, target: string) => void;
         deleteMedia: (index: number, target: string) => void;
+        updateMediaDuration: (index: number, target: string, duration: number | undefined) => void;
         updateAudio: (url: string, target: string) => void;
         onDeleteSchedule: (id: string) => void;
         onEditSchedule: (id: string, def: ScheduleDefinition) => void;
@@ -115,6 +116,7 @@ export function useAdminPage(
         handleEditSchedule,
         handleAddMedia:    (item: MediaItem) => actions.addMedia(item, activeTarget),
         handleDeleteMedia: (index: number) => actions.deleteMedia(index, activeTarget),
+        handleUpdateMediaDuration: (index: number, duration: number | undefined) => actions.updateMediaDuration(index, activeTarget, duration),
         handleUpdateAudio: (url: string) => actions.updateAudio(url, activeTarget),
         handleRenameDisplay: (oldName: string, newName: string) => {
             actions.renameDisplay(oldName, newName);

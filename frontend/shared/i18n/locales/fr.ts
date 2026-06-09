@@ -15,6 +15,8 @@ export const fr = {
         default: "Playlist Globale",
         schedule: "Playlist - Du {start} au {end}",
         empty: "Aucun média dans la playlist.",
+        defaultDuration: "défaut",
+        editDuration: "Modifier la durée d'affichage",
     },
     schedule: {
         title: "Planification",

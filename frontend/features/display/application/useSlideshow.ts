@@ -22,7 +22,8 @@ export function useSlideshow(items: MediaItem[], slideDuration: number) {
         const currentItem = items[currentIndex];
         if (currentItem?.type !== 'image') return;
 
-        const timer = setTimeout(goToNext, slideDuration);
+        const duration = currentItem.duration ?? slideDuration;
+        const timer = setTimeout(goToNext, duration);
         return () => clearTimeout(timer);
     }, [currentIndex, items, slideDuration, goToNext]);
 
